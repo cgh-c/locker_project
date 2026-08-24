@@ -1,0 +1,9 @@
+// MQTT 配置模板
+// 使用前请复制为 config.js 并填写实际值
+const MQTT_CONFIG = {
+    broker: 'YOUR_BROKER_ADDRESS',
+    port: 8084,                    // WSS 端口
+    username: 'YOUR_USERNAME',
+    password: 'YOUR_PASSWORD',
+    clientIdPrefix: 'web_'
+};

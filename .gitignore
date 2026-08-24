@@ -1,0 +1,43 @@
+# 编译产物
+build/
+*.o
+*.a
+*.so
+*.d
+locker_agent
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.log
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# 测试/调试
+test/
+test_*
+*_test
+*.txt
+
+#配置文件
+config/locker_config.json
+
+# 前端配置文件（包含密码）
+web/config.js
+

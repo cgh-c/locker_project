@@ -1,0 +1,18 @@
+{
+    "mqtt": {
+        "broker": "YOUR_BROKER_ADDRESS",
+        "port": 1883,
+        "username": "YOUR_USERNAME",
+        "password": "YOUR_PASSWORD",
+        "client_id": "locker001"
+    },
+    "serial": {
+        "device": "/dev/ttymxc2",
+        "baudrate": 9600,
+        "timeout_ms": 500
+    },
+    "locker": {
+        "board_addr": 1,
+        "box_count": 12
+    }
+}
