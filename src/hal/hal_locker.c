@@ -61,7 +61,6 @@ static int send_and_wait_reply(int fd, const uint8_t *tx_buf, int tx_len,
     // ---------- 发送数据 ----------
     ssize_t written = write(fd, tx_buf, tx_len);
     if (written != tx_len) {
-        // gpio_set_value(0); // 异常时记得恢复接收模式
         return -2;
     }
     // tcdrain(fd);          // 等待发送完成（硬件FIFO发完）
@@ -218,15 +217,7 @@ int lock_serial_init(const char *device_path, int baudrate)
         return -1;
     }
 
-    // if (gpio_init() < 0) {
-    //     printf("GPIO 初始化失败，但继续执行...\n");
-    //     // 根据你的需求，可以返回 -1
-    // }
-
     memset(&rs485, 0, sizeof(rs485));
-
-    // rs485.flags = SER_RS485_ENABLED |
-    //             SER_RS485_RTS_ON_SEND;
 
     rs485.flags = SER_RS485_ENABLED |
               SER_RS485_RTS_AFTER_SEND;
@@ -238,19 +229,7 @@ int lock_serial_init(const char *device_path, int baudrate)
         perror("TIOCSRS485");
         return -1;
     }
-    // // ---------- 配置RS485模式（针对IMX6ULL） ----------
-    // memset(&rs485, 0, sizeof(rs485));
-    // // 使能RS485模式，RTS在发送时置高
-    // rs485.flags = SER_RS485_ENABLED | SER_RS485_RTS_ON_SEND;
-    // rs485.delay_rts_before_send = 0;
-    // rs485.delay_rts_after_send = 0;
-    // if (ioctl(fd, TIOCSRS485, &rs485) < 0) {
-    //     // 不是所有平台都支持，如果失败则警告但不影响
-    //     perror("TIOCSRS485 (警告)");
-    //     // 但继续，因为可能不需要硬件自动控制RTS，用户之前代码中启用也成功了
-    //     // 若你的硬件必须，则返回错误
-    //     // close(fd); return -1;
-    // }
+    
     struct serial_rs485 check;
     memset(&check, 0, sizeof(check));
 

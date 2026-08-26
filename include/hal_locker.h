@@ -2,19 +2,10 @@
 #define _HAL_LOCKER_H
 
 #include <stdint.h>
-
-// #define RS485_GPIO_PIN  128  // 你测试用的gpio编号
-// #define GPIO_EXPORT_PATH "/sys/class/gpio/export"
-// #define GPIO_VALUE_PATH  "/sys/class/gpio/gpio128/value"
-// #define GPIO_DIR_PATH    "/sys/class/gpio/gpio128/direction"
-
+#define DEFAULT_BOARD_ADDR   0x01  // 默认锁控板地址
 /* 串口配置参数 */
 #define LOCK_BAUDRATE        B9600   // 波特率 9600
 #define LOCK_DEVICE         "/dev/ttymxc2"  // 默认设备，可传参修改
-
-/* 板地址（根据实际拨码开关设置，默认为1） */
-#define DEFAULT_BOARD_ADDR  0x01
-
 /* 指令码（操作码） */
 #define CMD_OPEN_SINGLE      0x82
 #define CMD_READ_SINGLE      0x83

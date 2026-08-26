@@ -10,8 +10,6 @@
 
 #include "cJSON.h"
 
-// 全局串口 fd（供 send_reply 等使用）
-static int g_serial_fd = -1;
 /* MQTT Topic */
 #define MQTT_CMD_TOPIC      "locker/locker001/cmd"
 #define MQTT_REPLY_TOPIC    "locker/locker001/reply"
@@ -69,86 +67,7 @@ static int mqtt_publish_text(MQTTClient client,
     return 0;
 }
 
-/*
- * 处理 open 命令
- *
- * 输入：
- * open 1
- */
-static void handle_open(locker_context_t *ctx, int door_id)
-{
-    char reply[128];
 
-    printf("[LOCKER] open door %d\n", door_id);
-
-    if (door_id < 1 || door_id > 12)
-    {
-        snprintf(
-            reply,
-            sizeof(reply),
-            "open %d failed invalid_door_id",
-            door_id
-        );
-
-        mqtt_publish_text(
-            ctx->mqtt_client,
-            MQTT_REPLY_TOPIC,
-            reply
-        );
-
-        return;
-    }
-
-    int ret = lock_open_single(
-        ctx->lock_fd,
-        (uint8_t)door_id,
-        LOCK_DEFAULT_TIMEOUT_MS
-    );
-
-    if (ret == 0)
-    {
-        printf("[LOCKER] door %d open success\n", door_id);
-
-        snprintf(
-            reply,
-            sizeof(reply),
-            "open %d ok",
-            door_id
-        );
-    }
-    else if (ret == -1)
-    {
-        printf("[LOCKER] door %d timeout\n", door_id);
-
-        snprintf(
-            reply,
-            sizeof(reply),
-            "open %d failed timeout",
-            door_id
-        );
-    }
-    else
-    {
-        printf(
-            "[LOCKER] door %d failed, ret=%d\n",
-            door_id,
-            ret
-        );
-
-        snprintf(
-            reply,
-            sizeof(reply),
-            "open %d failed hal_error",
-            door_id
-        );
-    }
-
-    mqtt_publish_text(
-        ctx->mqtt_client,
-        MQTT_REPLY_TOPIC,
-        reply
-    );
-}
 
 
 /*
