@@ -27,12 +27,13 @@ int lock_serial_init(const char *device_path, int baudrate);
 void lock_serial_close(int fd);
 
 /**
- * @brief 开单个锁
- * @param fd         串口文件描述符
- * @param box_id     通道号（1~12）
- * @param timeout_ms 等待回复超时时间（毫秒），若<=0则使用默认
- * @return 0=成功, -1=通信超时, -2=锁控板返回错误状态（非0）
+ * @brief 发送原始帧（RS485 方向切换 + write + tcdrain）
+ * @param fd    串口文件描述符
+ * @param data  已组好的帧数据
+ * @param len   帧长度
+ * @return 0=成功, -1=失败
  */
 int hal_serial_send(int fd, const uint8_t *data, int len);
+
 #endif // _HAL_LOCK_H
 

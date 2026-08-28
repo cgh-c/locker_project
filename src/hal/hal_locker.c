@@ -6,8 +6,6 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <linux/serial.h>
-#include <errno.h>
-#include <sys/select.h>
 
 // 在 hal_locker.c 中添加
 int hal_serial_send(int fd, const uint8_t *data, int len)
