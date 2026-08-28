@@ -7,6 +7,7 @@
 #define CMD_OPEN_SINGLE      0x82
 #define CMD_READ_SINGLE      0x83
 #define CMD_READ_ALL         0x84
+#define CMD_EVENT_CHANGE     0x85   /* 锁控板主动上报门状态变化 */
 #define CMD_OPEN_ALL         0x86
 
 /* 锁状态 / 执行状态 */

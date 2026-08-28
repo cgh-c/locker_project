@@ -75,7 +75,8 @@ int proto_parse_read_all(const uint8_t *buf, int len,
     if (buf[4] != len)                                  return PROTO_ERR_LENGTH;
     if (compute_xor(buf, len - 1) != buf[len - 1])      return PROTO_ERR_XOR;
     if (buf[6] != CMD_READ_ALL)                         return PROTO_ERR_CMD;
-
+    if (buf[7] != LOCK_OP_SUCCESS) return PROTO_ERR_CMD;
+    
     int n = buf[8];                       /* 锁数量字段（偏移8），实测 0x0C=12 */
     if (PROTO_RSP_LEN_READ_ALL(n) != len) return PROTO_ERR_LENGTH;  /* 数量与帧长自洽性 */
     if (n > max_count)                    return PROTO_ERR_PARAM;
