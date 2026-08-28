@@ -30,14 +30,15 @@ Thumbs.db
 *.rej
 
 # 测试/调试
+test_output/
+*.gcda
+*.gcno
 test/
-test_*
-*_test
-*.txt
 
 #配置文件
 config/locker_config.json
 
-# 前端配置文件（包含密码）
+# 前端配置文件
 web/config.js
 
+*.pdf
