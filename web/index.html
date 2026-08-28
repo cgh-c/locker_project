@@ -183,6 +183,7 @@
 
 <div id="toast" class="toast"></div>
 
+<script src="mqttws31.js"></script>
 <script src="config.js"></script>
 
 <script>
@@ -278,16 +279,19 @@
         showToast(`📤 已发送 ${cmd} ${box}`, 1000);
     }
 
-    // ========== 查询所有锁状态（依次） ==========
+    // ========== 查询所有锁状态（一次 read_all，不再轮询） ==========
     function queryAllStatus() {
         if (!mqttConnected) {
             showToast('⚠️ 未连接', 1500);
             return;
         }
+        // 后端现在支持 read_all 命令，一次拿回全部锁状态，避免 12 次轮询
+        const payload = JSON.stringify({ cmd: 'read_all', ts: Date.now() });
+        const message = new Paho.MQTT.Message(payload);
+        message.destinationName = TOPIC_CMD;
+        message.qos = 1;
+        client.send(message);
         showToast('🔄 查询全部锁状态...', 2000);
-        for (let i = 1; i <= BOX_COUNT; i++) {
-            setTimeout(() => sendCommand('status', i), i * 200);
-        }
     }
 
     // ========== MQTT 回调 ==========
@@ -311,6 +315,14 @@
                     showToast(`❌ 失败: ${data.msg}`, 2000);
                     return;
                 }
+                // read_all 回复：data.boxes 是数组 [{id,status},...]
+                if (data.data && Array.isArray(data.data.boxes)) {
+                    data.data.boxes.forEach(item => {
+                        updateLockState(item.id, item.status === 1 ? 'open' : 'closed');
+                    });
+                    showToast('✅ 状态已同步', 1000);
+                    return;
+                }
                 if (data.box !== undefined && data.box >= 1 && data.box <= 12) {
                     if (data.data && data.data.status !== undefined) {
                         const statusText = data.data.status === 1 ? 'open' : 'closed';
@@ -328,11 +340,18 @@
         } else if (topic === 'locker/locker001/event') {
             try {
                 const data = JSON.parse(message.payloadString);
+                // 心跳：全量状态同步
                 if (data.event === 'heartbeat' && data.boxes) {
                     data.boxes.forEach(item => {
                         updateLockState(item.id, item.status === 1 ? 'open' : 'closed');
                     });
                     showToast('✅ 状态已同步', 1000);
+                }
+                // 0x85 主动上报：单个门状态变化
+                else if (data.event === 'lock_change') {
+                    const statusText = data.status === 1 ? 'open' : 'closed';
+                    updateLockState(data.box, statusText);
+                    showToast(`🔒 #${String(data.box).padStart(2,'0')} ${statusText === 'open' ? '开' : '关'}`, 1000);
                 }
             } catch (e) {
                 console.warn('Parse event error:', e);
